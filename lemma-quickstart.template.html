@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Get started with Lemma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4f0; --panel:#ffffff; --ink:#141414; --muted:#6b6b6b; --faint:#9a9a9a;
+  --line:#e6e3dd; --radius:16px;
+  --gold:#c4862a; --gold-tint:#faf3e4; --gold-soft:#f6e8cd;
+  --purple:#6a5bd0; --purple-soft:#ece9fb;
+  --green:#16a34a; --green-soft:#dcf2e3;
+  --shadow:0 18px 50px rgba(20,20,20,.09), 0 3px 10px rgba(20,20,20,.05);
+  --shadow-sm:0 4px 16px rgba(20,20,20,.06);
+  --fs:"IBM Plex Sans",system-ui,sans-serif;
+  --fd:"Bricolage Grotesque","Avenir Next",sans-serif;
+  --fm:"IBM Plex Mono","SFMono-Regular",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+h1,h2,h3{font-family:var(--fd);font-weight:700;letter-spacing:-.02em;line-height:1.12;margin:0}
+.muted{color:var(--muted)}
+
+/* header */
+header.top{position:sticky;top:0;z-index:30;background:rgba(245,244,240,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--fd);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.bars{display:inline-flex;align-items:flex-end;gap:2.5px;height:18px}
+.bars i{width:4px;background:var(--gold);border-radius:1px;display:block}
+.bars i:nth-child(1){height:7px}.bars i:nth-child(2){height:12px}.bars i:nth-child(3){height:18px}
+.top .eyebrow{font-family:var(--fm);font-size:12px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;margin-left:2px}
+.top .spacer{flex:1}
+.btn-ghost{font-size:13.5px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:9px;font-weight:600}
+.btn-ghost:hover{border-color:#d8d4cc}
+
+/* hero */
+.hero{padding:54px 0 14px;text-align:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);background:var(--gold-tint);border:1px solid var(--gold-soft);padding:5px 12px;border-radius:999px}
+.hero h1{font-size:clamp(34px,6vw,52px);margin:18px 0 0}
+.hero h1 .accent{color:var(--gold)}
+.hero p.sub{font-size:18px;color:var(--muted);max-width:560px;margin:14px auto 0}
+
+/* step bar */
+.flowbar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px 0 4px}
+.flowbar .chip{font-family:var(--fm);font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.flowbar .chip b{color:var(--ink)}
+
+/* cards / chooser */
+section.block{padding:30px 0}
+.qhead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+.qnum{font-family:var(--fd);font-weight:800;color:var(--gold);font-size:15px;background:var(--gold-tint);border:1px solid var(--gold-soft);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none}
+.qhead h2{font-size:23px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.choice{appearance:none;text-align:left;cursor:pointer;background:var(--panel);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);transition:.15s;font-family:var(--fs);color:inherit;display:flex;flex-direction:column;gap:6px}
+.choice:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.active{border-color:var(--gold);background:var(--gold-tint)}
+.choice .ic{font-size:24px;line-height:1}
+.choice .t{font-family:var(--fd);font-weight:700;font-size:18px}
+.choice .d{font-size:13.5px;color:var(--muted);line-height:1.45}
+.choice .tag{align-self:flex-start;margin-top:4px;font-family:var(--fm);font-size:11px;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:999px}
+
+/* track panel */
+.track{display:none;animation:fade .35s ease}
+.track.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.trackhead{display:flex;align-items:center;gap:12px;margin:8px 0 6px;flex-wrap:wrap}
+.pill{font-family:var(--fm);font-size:12px;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:5px 12px;font-weight:500}
+.pill.gold{background:var(--gold-tint);color:var(--gold-deep,#a96d1c)}
+.startover{margin-left:auto;font-size:13px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:var(--fs)}
+.startover:hover{border-color:#d8d4cc;color:var(--ink)}
+
+/* steps */
+.step{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px 22px 64px;margin:14px 0;box-shadow:var(--shadow-sm)}
+.step .n{position:absolute;left:18px;top:22px;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--fd);font-weight:700;font-size:15px;display:grid;place-items:center}
+.step.star .n{background:var(--gold)}
+.step h3{font-size:19px;margin-bottom:4px}
+.step p{margin:6px 0;color:#333}
+.step p.note{font-size:13.5px;color:var(--muted)}
+.substep{font-weight:600;margin-top:12px;font-size:14.5px;color:var(--ink)}
+
+/* code */
+.code{position:relative;background:#1c1b19;border-radius:11px;margin:11px 0;overflow:hidden;border:1px solid #2a2825}
+.code pre{margin:0;padding:14px 80px 14px 16px;overflow-x:auto;font-family:var(--fm);font-size:13px;line-height:1.7;color:#f3efe7;white-space:pre}
+.code .lang{position:absolute;top:8px;right:62px;font-family:var(--fm);font-size:10.5px;color:#8a857c;text-transform:uppercase;letter-spacing:.06em}
+.copy{position:absolute;top:8px;right:8px;background:#322f2b;color:#e8e3da;border:1px solid #43403a;border-radius:7px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:var(--fs)}
+.copy:hover{background:#3d3a35}
+.copy.ok{background:var(--green);border-color:var(--green);color:#fff}
+
+/* prompt box (highlighted) */
+.promptwrap{border:1.5px solid var(--gold);border-radius:14px;background:var(--gold-tint);padding:5px;margin:14px 0}
+.promptwrap .label{display:flex;align-items:center;gap:8px;padding:9px 12px 6px;font-family:var(--fm);font-size:12px;color:var(--gold-deep,#a96d1c)}
+.promptwrap .code{margin:0}
+.promptwrap pre{max-height:330px;overflow:auto;white-space:pre-wrap;word-break:break-word;padding-right:16px}
+
+/* screenshot */
+figure.shot{margin:14px 0 2px}
+figure.shot img{width:100%;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);display:block}
+figure.shot figcaption{font-size:12.5px;color:var(--faint);font-family:var(--fm);margin-top:7px;text-align:center}
+
+/* callout */
+.callout{border-radius:13px;padding:16px 18px;margin:14px 0;border:1px solid;font-size:14.5px}
+.callout.warn{background:#fdf6ec;border-color:var(--gold-soft)}
+.callout.info{background:var(--purple-soft);border-color:#ddd7f6}
+.callout.ok{background:var(--green-soft);border-color:#c5e9cf}
+.callout b{font-family:var(--fd)}
+.callout ul{margin:8px 0 0;padding-left:18px}
+.callout li{margin:4px 0}
+
+details.acc{border:1px solid var(--line);border-radius:13px;background:var(--panel);margin:12px 0;overflow:hidden}
+details.acc>summary{cursor:pointer;list-style:none;padding:16px 20px;font-family:var(--fd);font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary .chev{margin-left:auto;transition:.2s;color:var(--muted)}
+details.acc[open]>summary .chev{transform:rotate(180deg)}
+details.acc .body{padding:0 20px 18px}
+.freebadge{font-family:var(--fm);font-size:11px;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:999px}
+
+.modelist{list-style:none;padding:0;margin:8px 0}
+.modelist li{padding:7px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.modelist li:last-child{border:0}
+.modelist b{font-family:var(--fm);font-weight:500}
+
+.inlinelink{color:var(--purple);text-decoration:none;font-weight:600;border-bottom:1px solid var(--purple-soft)}
+.inlinelink:hover{border-color:var(--purple)}
+
+footer{padding:46px 0 60px;text-align:center;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:30px}
+footer a{color:var(--muted)}
+.hr{height:1px;background:var(--line);border:0;margin:8px 0}
+@media(max-width:560px){.step{padding:20px 18px 20px 18px}.step .n{position:static;margin-bottom:10px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="brand"><span class="bars"><i></i><i></i><i></i></span>Lemma</span>
+    <span class="eyebrow">Quickstart</span>
+    <span class="spacer"></span>
+    <a class="btn-ghost" href="https://lemma.work" target="_blank" rel="noopener">lemma.work&nbsp;↗</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="kicker">● Open source · AI-native workspace</span>
+    <h1>Get started with <span class="accent">Lemma</span></h1>
+    <p class="sub">Pick the path that fits you. Answer one or two questions and we'll show you the single, simplest way to go from zero to a working pod.</p>
+    <div class="flowbar">
+      <span class="chip"><b>1</b> &nbsp;Who are you</span>
+      <span class="chip"><b>2</b> &nbsp;What you've got</span>
+      <span class="chip"><b>3</b> &nbsp;Your exact steps</span>
+    </div>
+  </section>
+
+  <!-- Q1 -->
+  <section class="block" id="q1">
+    <div class="qhead"><span class="qnum">1</span><h2>Are you a developer?</h2></div>
+    <div class="choices">
+      <button class="choice" data-persona="dev">
+        <span class="ic">💻</span>
+        <span class="t">I'm a developer</span>
+        <span class="d">Comfortable in a terminal. You might want to run Lemma on your own machine, build pods with your coding agent, or self-host.</span>
+      </button>
+      <button class="choice" data-persona="nondev">
+        <span class="ic">✨</span>
+        <span class="t">I'm not a developer</span>
+        <span class="d">You'd rather not touch code. You'll use Lemma in the cloud and let an AI agent do the terminal setup for you.</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Q2 (non-dev only) -->
+  <section class="block" id="q2" style="display:none">
+    <div class="qhead"><span class="qnum">2</span><h2>Which AI coding agent do you have?</h2></div>
+    <p class="muted" style="margin-top:-8px;margin-bottom:16px">Lemma runs your agents on <b>your</b> AI &mdash; so you're not spending Lemma credits. Pick what you already pay for, or get a free one.</p>
+    <div class="choices">
+      <button class="choice" data-agent="claude">
+        <span class="ic">🟣</span>
+        <span class="t">Claude Code</span>
+        <span class="d">You have a Claude Pro or Max subscription.</span>
+      </button>
+      <button class="choice" data-agent="codex">
+        <span class="ic">⚫</span>
+        <span class="t">Codex</span>
+        <span class="d">You have a ChatGPT Plus subscription.</span>
+      </button>
+      <button class="choice" data-agent="opencode">
+        <span class="ic">🟢</span>
+        <span class="t">Neither &mdash; I want free</span>
+        <span class="d">No subscription. Use OpenCode with genuinely free models.</span>
+        <span class="tag">$0 to start</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ DEV TRACK ============ -->
+  <section class="block track" id="track-dev">
+    <div class="trackhead">
+      <span class="pill gold">Developer path</span>
+      <span class="muted" style="font-size:13.5px">Star → clone → run locally → host on Lemma</span>
+      <button class="startover" onclick="reset()">↺ Start over</button>
+    </div>
+    <h2 style="font-size:26px;margin:6px 0 2px">Run Lemma yourself, build with your agent</h2>
+    <p class="muted" style="margin-top:0">Everything below uses the open-source repo. You can stay fully local, and only move to the cloud when you want teammates to reach your pod.</p>
+
+    <div class="step star">
+      <span class="n">★</span>
+      <h3>Like what we've built? Star the repo</h3>
+      <p>If Lemma looks useful to you, a star genuinely helps other builders find it. We're shipping fixes and new features constantly &mdash; starring is the easiest way to keep the repo on your radar and catch the latest updates.</p>
+      <p><a class="btn-ghost" href="https://github.com/lemma-work/lemma-platform" target="_blank" rel="noopener">★ Star lemma-platform on GitHub ↗</a></p>
+    </div>
+
+    <div class="step">
+      <span class="n">1</span>
+      <h3>Clone it</h3>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>git clone https://github.com/lemma-work/lemma-platform.git
+cd lemma-platform</pre></div>
+    </div>
+
+    <div class="step">
+      <span class="n">2</span>
+      <h3>Run the full stack locally</h3>
+      <p>One command brings up everything in containers (needs Docker or Podman &mdash; the installer can set up Podman for you).</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>curl -fsSL https://raw.githubusercontent.com/lemma-work/lemma-platform/main/install.sh | bash</pre></div>
+      <p class="note">When it's up, open <b>http://127-0-0-1.sslip.io:3711</b> and create your account. (Use that host, not <code>localhost</code> &mdash; sign-in cookies are scoped to it.)</p>
+    </div>
+
+    <div class="step">
+      <span class="n">3</span>
+      <h3>Install the CLI and point it at your local stack</h3>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>uv tool install lemma-terminal
+lemma servers select local
+lemma auth login</pre></div>
+      <p class="note"><b>Which server?</b> <code>lemma servers select local</code> points the CLI at the <b>local</b> stack you just started &mdash; that's what you build against on your machine. (To work against the hosted cloud instead, you'd use <code>lemma servers cloud --use</code>.)</p>
+    </div>
+
+    <div class="step">
+      <span class="n">4</span>
+      <h3>Create your first pod</h3>
+      <p>A pod is one self-contained workspace &mdash; tables, agents, workflows, and apps for one job.</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma pod create my-team --with-starter
+lemma chat "what can you do in this pod?"</pre></div>
+    </div>
+
+    <div class="step">
+      <span class="n">5</span>
+      <h3>Use it from your own Claude Code or Codex</h3>
+      <p>Two things your coding agent can do with a pod &mdash; <b>build</b> it, and <b>power</b> it:</p>
+      <p class="substep">Build: let your agent author pods for you</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma skills install</pre></div>
+      <p class="note">Drops Lemma's pod-building skills into Claude Code / Codex / Cursor, then just ask it to build a pod. <b>This is all you need to build &mdash; no daemon required.</b> (If it ever errors on symlinks, it's safe to skip.)</p>
+      <p class="substep">Run (optional): power the pod's agents with your subscription</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>nohup lemma daemon start > ~/lemma-daemon.log 2>&1 &</pre></div>
+      <p class="note">Only needed when you want the pod's <i>own</i> agents to run on your Claude Code / Codex subscription instead of a configured model key. It bridges your local login to the pod &mdash; watch <code>~/lemma-daemon.log</code> for <b>ready ack</b>. (We use <code>nohup</code> on purpose &mdash; <code>lemma daemon start --background</code> is currently flaky.)</p>
+    </div>
+
+    <div class="step">
+      <span class="n">6</span>
+      <h3>Deploy it to Lemma (hosted)</h3>
+      <p>Want your pod reachable by teammates and surfaces without self-hosting? Push it to <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>. Export your local pod, point the CLI at the cloud, and import it there:</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma pod export ./my-team
+lemma servers cloud --use
+lemma auth login
+lemma pod import ./my-team</pre></div>
+      <p>Built an app for the pod? Deploy that too (a no-build HTML file or a Vite project dir):</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma apps deploy my-app ./index.html</pre></div>
+      <div class="callout ok" style="margin-bottom:0"><b>Credits:</b> your lemma.work account comes with free starter credits &mdash; enough to deploy your pod and run it live on Lemma's hosted models. Prefer your own subscription on the cloud too? Just start the daemon while pointed at the cloud server.</div>
+    </div>
+
+    <div class="callout ok"><b>That's it.</b> You have Lemma running locally, a working pod, your own agent wired in, and a path to the cloud when you're ready.</div>
+  </section>
+
+  <!-- ============ BRING-YOUR-OWN-AGENT TRACK ============ -->
+  <section class="block track" id="track-byo">
+    <div class="trackhead">
+      <span class="pill" id="byo-pill">Bring your own AI</span>
+      <span class="muted" style="font-size:13.5px">Sign up → paste one prompt → start working</span>
+      <button class="startover" onclick="reset()">↺ Start over</button>
+    </div>
+    <h2 style="font-size:26px;margin:6px 0 2px">Use Lemma with your own AI &mdash; no code</h2>
+    <p class="muted" style="margin-top:0">You'll sign up in the browser, then paste one prompt into your coding agent and it does the terminal setup for you. About 5 minutes.</p>
+
+    <!-- OpenCode free-credits pre-step -->
+    <details class="acc" id="opencode-acc">
+      <summary>🟢 First: get a free coding agent with OpenCode <span class="freebadge">$0</span><span class="chev">▾</span></summary>
+      <div class="body">
+        <p>No Claude Code or Codex subscription? Get a free coding agent with the <b>OpenCode desktop app</b> and <b>OpenCode Zen</b> free models &mdash; no terminal, and no card for the free tier. Here's the whole flow:</p>
+        <figure class="shot"><img src="{{IMG_GIF}}" alt="OpenCode desktop app setup walkthrough"><figcaption>The 6-step OpenCode desktop setup</figcaption></figure>
+        <ol style="padding-left:20px;line-height:1.8;margin:6px 0">
+          <li><b>Download</b> the desktop app at <a class="inlinelink" href="https://opencode.ai/download" target="_blank" rel="noopener">opencode.ai/download</a>.</li>
+          <li><b>Open OpenCode Zen</b> &mdash; go to <a class="inlinelink" href="https://opencode.ai/zen" target="_blank" rel="noopener">opencode.ai/zen</a> and sign in.</li>
+          <li><b>Copy your API key</b> from the Zen dashboard.</li>
+          <li>In the app, open <b>Connect provider</b> and pick <b>OpenCode Zen</b>.</li>
+          <li><b>Paste your key</b> and hit Continue.</li>
+          <li><b>Pick a free model</b> &mdash; e.g. DeepSeek V4 Flash Free or Big Pickle &mdash; and you're ready.</li>
+        </ol>
+        <p class="substep">Free models you can pick</p>
+        <ul class="modelist">
+          <li><b>Big Pickle</b> &mdash; stealth model tuned for coding agents</li>
+          <li><b>DeepSeek V4 Flash Free</b> &mdash; fast, capable, great for scaffolding</li>
+          <li><b>North Mini Code Free</b> · <b>MiMo-V2.5 Free</b> · <b>Nemotron 3 Ultra Free</b></li>
+        </ul>
+        <div class="callout warn" style="margin-bottom:0"><b>Heads up:</b> OpenCode's free models are free "for a limited time" &mdash; grab them now. Docs &amp; pricing: <a class="inlinelink" href="https://opencode.ai/docs/zen" target="_blank" rel="noopener">opencode.ai/docs/zen</a></div>
+      </div>
+    </details>
+
+    <div class="step">
+      <span class="n">0</span>
+      <h3 id="step0head">Make sure your coding agent is installed and signed in</h3>
+      <p id="step0body">Open your agent once and confirm you're logged in before you start.</p>
+      <p class="note">Get them here: <a class="inlinelink" href="https://www.anthropic.com/claude-code" target="_blank" rel="noopener">Claude Code</a> · <a class="inlinelink" href="https://openai.com/codex" target="_blank" rel="noopener">Codex</a> · <a class="inlinelink" href="https://opencode.ai/download" target="_blank" rel="noopener">OpenCode</a></p>
+    </div>
+
+    <div class="step">
+      <span class="n">1</span>
+      <h3>Sign up for Lemma</h3>
+      <p>Go to <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>, click <b>Get started</b>, and complete your sign-up or sign-in. New accounts get free starter credits automatically.</p>
+      <figure class="shot"><img src="{{IMG_HOME}}" alt="lemma.work homepage"><figcaption>lemma.work → Get started</figcaption></figure>
+      <figure class="shot"><img src="{{IMG_SIGNIN}}" alt="Complete your sign-up or sign-in"><figcaption>Complete your sign-up or sign-in</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">2</span>
+      <h3>On "Connect your AI", choose "Connect a local harness"</h3>
+      <p>Right after sign-up, Lemma asks how it should run AI for you. Pick the first option, <b>Connect a local harness</b> &mdash; that's your own Claude Code / Codex / OpenCode, connected through the Lemma daemon. Leave this screen open; you'll come back to it in a moment.</p>
+      <figure class="shot"><img src="{{IMG_ONBOARD_CONNECT}}" alt="Connect your AI onboarding screen"><figcaption>Pick <b>Connect a local harness</b> &mdash; you'll click <b>Recheck</b> after the next step</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">3</span>
+      <h3 id="step2head">Open your coding agent, then paste this prompt</h3>
+      <p id="step2lead"><b>Open Claude Code</b> (the app you set up in step 0), then paste the prompt below into it. It connects Lemma to your machine for you &mdash; the agent will <b>pause</b> and ask you to approve commands and to sign in in the browser, so just follow its plain-language instructions. You're done when it says <b>"ALL STEPS ARE COMPLETE."</b></p>
+      <div class="promptwrap">
+        <div class="label">📋 Paste into <span id="promptAgentName">Claude Code</span><button class="copy" style="position:static;margin-left:auto" onclick="cpPrompt(this)">Copy prompt</button></div>
+        <div class="code" style="margin:0"><pre id="promptBox"></pre></div>
+      </div>
+      <p class="note">The onboarding screen lists these same commands, but the prompt runs them all for you &mdash; and uses the connection command that actually keeps running.</p>
+      <div class="callout info" style="margin-bottom:0"><b>What you'll do while it runs:</b>
+        <ul>
+          <li><b>Approve commands</b> when the agent asks.</li>
+          <li><b>Sign in</b> when a browser window opens, then tell the agent you're done.</li>
+          <li><b>Only if</b> the terminal shows a numbered list of organizations, pick your number. Most people skip this.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="n">4</span>
+      <h3>Back on Lemma, click "Recheck" and pick your agent</h3>
+      <p>When the agent says <b>"ALL STEPS ARE COMPLETE,"</b> switch back to the Lemma tab and click <b>Recheck</b>. Your agent now appears under <b>Detected harnesses</b> &mdash; click it to select it, then click <b>Continue</b>.</p>
+      <figure class="shot"><img src="{{IMG_ONBOARD_SELECT}}" alt="Detected harness selected"><figcaption>Select your detected agent (e.g. Claude Code) → <b>Continue</b></figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">5</span>
+      <h3>Describe what you want &mdash; or pick a starter</h3>
+      <p>On "What do you want to get done?", type anything to test (even just <i>"just a hi"</i>), or pick one of the starter cards. Then click <b>Create my space</b>.</p>
+      <figure class="shot"><img src="{{IMG_DESCRIBE}}" alt="Describe your pod screen"><figcaption>Type a goal (or pick a card) → <b>Create my space</b></figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">6</span>
+      <h3>Your pod gets to work</h3>
+      <p>Lemma spins up your pod and starts working on your goal &mdash; running on <b>your own AI</b>, not Lemma credits. 🎉 Keep chatting in the message bar to shape it.</p>
+      <figure class="shot"><img src="{{IMG_WORKING}}" alt="Pod working on the goal"><figcaption>Your pod, live and thinking &mdash; the model in use shows in the message bar</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">7</span>
+      <h3>If something doesn't work, switch the model to "default"</h3>
+      <p>Click the model name in the message bar to open <b>Choose model</b>, keep your runtime selected, and pick <b>default</b>.</p>
+      <figure class="shot"><img src="{{IMG_MODEL_MODAL}}" alt="Choose model modal"><figcaption>Click the model in the message bar → <b>Choose model</b> opens</figcaption></figure>
+      <figure class="shot"><img src="{{IMG_MODEL_DEFAULT}}" alt="default model selected"><figcaption>Pick <b>default</b></figcaption></figure>
+    </div>
+
+    <details class="acc">
+      <summary>🛟 If something doesn't work<span class="chev">▾</span></summary>
+      <div class="body">
+        <ul style="padding-left:18px">
+          <li><b><code>uv</code> not found</b> after install → run <code>uv tool update-shell</code>, or just open a fresh terminal, and continue.</li>
+          <li><b>No harness shows up after Recheck</b> → make sure the agent finished ("ALL STEPS ARE COMPLETE") and the connection is still running. Re-run the daemon line and check the log for <b>ready ack</b>:
+            <div class="code" style="margin-top:8px"><button class="copy" onclick="cp(this)">Copy</button><pre>nohup lemma daemon start > ~/lemma-daemon.log 2>&1 &
+tail -n 20 ~/lemma-daemon.log</pre></div>
+          </li>
+          <li><b>Reply errors asking for paid credits</b> → switch the model to <b>default</b> (step 7).</li>
+          <li><b>On Windows</b> → the background-connection command is newer and less tested. If it doesn't stay up, tell your agent your OS and ask it to keep the daemon running, or ping us.</li>
+          <li>Stuck anywhere → paste the error back to your coding agent; it can usually fix it on the spot.</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="callout ok" style="margin-top:16px"><b>You're set.</b> Your pod now runs on your own AI. Next: try a template, connect a channel like Slack or WhatsApp, or ask your agent to build a workflow.</div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="brand" style="justify-content:center"><span class="bars"><i></i><i></i><i></i></span>Lemma</span>
+    <p style="margin:10px 0 0">The open-source workspace where humans and AI agents work as one team.<br>
+    <a href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a> &nbsp;·&nbsp; <a href="https://lemma.work/docs" target="_blank" rel="noopener">Docs</a> &nbsp;·&nbsp; <a href="https://github.com/lemma-work/lemma-platform" target="_blank" rel="noopener">GitHub</a></p>
+  </div>
+</footer>
+
+<!-- raw prompt (kept out of HTML parsing) -->
+<script type="text/plain" id="promptSrc">Help me set up a tool called "Lemma" on my computer. You don't need to know
+Lemma — just run these exact commands for me, one at a time, explain each
+simply, and PAUSE whenever you need me to do something.
+
+IMPORTANT: Whenever you need me to act — approve a command, or sign in in the
+browser — STOP, tell me in simple plain language what to do, and WAIT for me. If
+I get stuck or anything errors, help me fix it before moving on.
+
+Reference for you only (use ONLY if a step misbehaves; don't ask me to read it):
+https://lemma.work/docs
+
+1. Check if `uv` is installed (run: uv --version). If NOT, install it for my OS:
+   - macOS / Linux:  curl -LsSf https://astral.sh/uv/install.sh | sh
+   - Windows (PowerShell):  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   If `uv` still isn't found, fix the PATH (run `uv tool update-shell` or open a
+   fresh terminal) and continue.
+
+2. Install the Lemma CLI:  uv tool install lemma-terminal
+
+3. Point it at the Lemma cloud:  lemma servers cloud --use
+
+4. Log me in: run  lemma auth login
+   -> A browser opens. STOP and tell me to sign in / approve there; wait until I
+      confirm I'm done.
+   -> Most people have one default organization, so login just finishes. ONLY if
+      the terminal shows a numbered list of organizations, show it to me and ask
+      which number, then finish login. Otherwise continue.
+
+5. Start the Lemma connection as a background process that keeps running after
+   you finish. Do NOT use `--background` (broken). Run for my OS and keep it up:
+   - macOS / Linux:  nohup lemma daemon start > ~/lemma-daemon.log 2>&1 &
+   - Windows (PowerShell):  Start-Process lemma -ArgumentList "daemon","start" -WindowStyle Hidden -RedirectStandardOutput "$HOME\lemma-daemon.log" -RedirectStandardError "$HOME\lemma-daemon-err.log"
+   Then wait a few seconds and confirm the log contains the line `ready ack`.
+
+6. Verify everything works. Then clearly tell me "ALL STEPS ARE COMPLETE" and
+   that I should switch to my browser to finish in Lemma. If anything isn't
+   working, help me troubleshoot until it does.</script>
+
+<script>
+// render prompt text
+document.getElementById('promptBox').textContent = document.getElementById('promptSrc').textContent.trim();
+
+var state={persona:null,agent:null};
+var AGENT={claude:{name:"Claude Code",pill:"Bring your own AI · Claude Code"},
+           codex:{name:"Codex",pill:"Bring your own AI · Codex"},
+           opencode:{name:"OpenCode",pill:"Free with OpenCode"}};
+
+function show(id,on){document.getElementById(id).classList.toggle('show',on)}
+function reset(){
+  state={persona:null,agent:null};
+  document.querySelectorAll('.choice').forEach(c=>c.classList.remove('active'));
+  document.getElementById('q2').style.display='none';
+  show('track-dev',false);show('track-byo',false);
+  document.getElementById('q1').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.querySelectorAll('[data-persona]').forEach(b=>b.onclick=()=>{
+  state.persona=b.dataset.persona;
+  document.querySelectorAll('[data-persona]').forEach(c=>c.classList.toggle('active',c===b));
+  if(state.persona==='dev'){
+    document.getElementById('q2').style.display='none';
+    show('track-byo',false);show('track-dev',true);
+    setTimeout(()=>document.getElementById('track-dev').scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }else{
+    show('track-dev',false);show('track-byo',false);
+    var q2=document.getElementById('q2');q2.style.display='block';
+    setTimeout(()=>q2.scrollIntoView({behavior:'smooth',block:'center'}),80);
+  }
+});
+
+document.querySelectorAll('[data-agent]').forEach(b=>b.onclick=()=>{
+  state.agent=b.dataset.agent;
+  document.querySelectorAll('[data-agent]').forEach(c=>c.classList.toggle('active',c===b));
+  var a=AGENT_apply(state.agent);
+  show('track-byo',true);
+  setTimeout(()=>document.getElementById('track-byo').scrollIntoView({behavior:'smooth',block:'start'}),80);
+});
+
+function AGENT_apply(agent){
+  var meta=AGENT[agent];
+  document.getElementById('byo-pill').textContent=meta.pill;
+  var acc=document.getElementById('opencode-acc');
+  var s0h=document.getElementById('step0head'), s0b=document.getElementById('step0body');
+  if(agent==='opencode'){
+    acc.open=true;
+    s0h.textContent="Set up OpenCode with a free model (above), then come back";
+    s0b.innerHTML="Finish the green OpenCode step above so a free model is connected and ready.";
+  }else{
+    acc.open=false;
+    s0h.textContent="Make sure "+meta.name+" is installed and signed in";
+    s0b.innerHTML="Open "+meta.name+" once and confirm you're logged in with your subscription before you start.";
+  }
+  // Step 2 — name the agent the user actually has
+  document.getElementById('promptAgentName').textContent=meta.name;
+  document.getElementById('step2lead').innerHTML=
+    "<b>Open "+meta.name+"</b> (the app you set up in step 0), then paste the prompt below into it. "+
+    "It connects Lemma to your machine for you &mdash; "+meta.name+" will <b>pause</b> and ask you to approve "+
+    "commands and to sign in in the browser, so just follow its plain-language instructions. "+
+    "You're done when it says <b>\"ALL STEPS ARE COMPLETE.\"</b>";
+  return meta;
+}
+</script>
+
+<script>
+// copy helpers
+function flash(btn){var t=btn.textContent;btn.textContent='Copied ✓';btn.classList.add('ok');setTimeout(()=>{btn.textContent=t;btn.classList.remove('ok')},1400);}
+function cp(btn){var pre=btn.parentElement.querySelector('pre');navigator.clipboard.writeText(pre.textContent).then(()=>flash(btn));}
+function cpPrompt(btn){var t=document.getElementById('promptBox').textContent;navigator.clipboard.writeText(t).then(()=>flash(btn));}
+</script>
+</body>
+</html>
