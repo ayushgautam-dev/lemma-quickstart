@@ -205,7 +205,7 @@ footer a{color:var(--muted)}
   <section class="block track" id="track-dev">
     <div class="trackhead">
       <span class="pill gold">Developer path</span>
-      <span class="muted" style="font-size:13.5px">Star → clone → run locally → host on Lemma</span>
+      <span class="muted" style="font-size:13.5px">Star → run locally → build with your agent → host on Lemma</span>
       <button class="startover" onclick="reset()">↺ Start over</button>
     </div>
     <h2 style="font-size:26px;margin:6px 0 2px">Run Lemma yourself, build with your agent</h2>
@@ -214,19 +214,12 @@ footer a{color:var(--muted)}
     <div class="step star">
       <span class="n">★</span>
       <h3>Like what we've built? Star the repo</h3>
-      <p>If Lemma looks useful to you, a star genuinely helps other builders find it. We're shipping fixes and new features constantly &mdash; starring is the easiest way to keep the repo on your radar and catch the latest updates.</p>
+      <p>If Lemma looks useful to you, a star genuinely helps other builders find it. We're shipping fixes and new features constantly &mdash; starring is the easiest way to keep the repo on your radar and catch the latest updates. Want to contribute? Fork the repo and send a PR.</p>
       <p><a class="btn-ghost" href="https://github.com/lemma-work/lemma-platform" target="_blank" rel="noopener">★ Star lemma-platform on GitHub ↗</a></p>
     </div>
 
     <div class="step">
       <span class="n">1</span>
-      <h3>Clone it</h3>
-      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>git clone https://github.com/lemma-work/lemma-platform.git
-cd lemma-platform</pre></div>
-    </div>
-
-    <div class="step">
-      <span class="n">2</span>
       <h3>Run the full stack locally</h3>
       <p>One command brings up everything in containers (needs Docker or Podman &mdash; the installer can set up Podman for you).</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>curl -fsSL https://raw.githubusercontent.com/lemma-work/lemma-platform/main/install.sh | bash</pre></div>
@@ -234,7 +227,7 @@ cd lemma-platform</pre></div>
     </div>
 
     <div class="step">
-      <span class="n">3</span>
+      <span class="n">2</span>
       <h3>Install the CLI and point it at your local stack</h3>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>uv tool install lemma-terminal
 lemma servers select local
@@ -243,7 +236,7 @@ lemma auth login</pre></div>
     </div>
 
     <div class="step">
-      <span class="n">4</span>
+      <span class="n">3</span>
       <h3>Install Lemma skills</h3>
       <p>Add Lemma's pod-building skills to Claude Code, Codex, Cursor, or any supported coding agent so it knows how to build with the CLI.</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma skills install</pre></div>
@@ -251,14 +244,14 @@ lemma auth login</pre></div>
     </div>
 
     <div class="step">
-      <span class="n">5</span>
+      <span class="n">4</span>
       <h3>Use it from your own Claude Code or Codex</h3>
       <p>If you've done the steps above, you can start building directly from your IDE. Claude Code, Codex, or Cursor can use the installed Lemma skills automatically, so just ask your coding agent to build the pod, tables, agents, workflows, and apps you want with the <code>lemma</code> CLI.</p>
       <p class="note">No extra setup is needed here &mdash; keep building in your IDE and let your coding agent drive Lemma from the local CLI.</p>
     </div>
 
     <div class="step">
-      <span class="n">6</span>
+      <span class="n">5</span>
       <h3>Create your first pod</h3>
       <p>A pod is one self-contained workspace &mdash; tables, agents, workflows, and apps for one job.</p>
       <p class="note">If you're using Claude Code, Codex, or another coding agent, you do not need to run this manually &mdash; you can continue building in your IDE and let the agent create the pod with the Lemma CLI.</p>
@@ -267,7 +260,7 @@ lemma chat "what can you do in this pod?"</pre></div>
     </div>
 
     <div class="step">
-      <span class="n">7</span>
+      <span class="n">6</span>
       <h3>Deploy it to Lemma (hosted)</h3>
       <p>Want your pod reachable by teammates and surfaces without self-hosting? Push it to <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>. Export your local pod, point the CLI at the cloud, and import it there:</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma pod export ./my-team
