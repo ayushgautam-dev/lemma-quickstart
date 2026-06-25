@@ -13,6 +13,7 @@ Usage:
 """
 import base64
 import io
+import json
 import os
 import re
 
@@ -84,56 +85,61 @@ def webp_datauri(im, width=1320, quality=82):
     return "data:image/webp;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
+def blur(im, box, radius=16):
+    im.paste(im.crop(box).filter(ImageFilter.GaussianBlur(radius)), box)
+    return im
+
+
 def build_images():
+    # ---- shared images (referenced by {{IMG_*}} placeholders) ----
     data = {}
-
     # Step 1 — homepage: crop the browser chrome off the top
-    home = shot("1.png").crop((0, CHROME_CROP, 2880, 1800))
-    data["home"] = webp_datauri(home)
-
+    data["home"] = webp_datauri(shot("1.png").crop((0, CHROME_CROP, 2880, 1800)))
     # Step 1 — sign-in: blur the private email row, THEN crop the chrome
-    sign = shot("2.png")
-    sign.paste(sign.crop(EMAIL_BOX).filter(ImageFilter.GaussianBlur(22)), EMAIL_BOX)
-    sign = sign.crop((0, CHROME_CROP, 2880, 1800))
-    data["signin"] = webp_datauri(sign)
-
-    # Step 2 — onboarding "Connect your AI": box the Recheck button
-    data["onboard_connect"] = webp_datauri(annotate(shot("3-onboarding.png"), [
-        ((1905, 762, 2125, 842), "Click Recheck after the prompt", (1885, 772), "rt"),
-    ]), quality=80)
-
-    # Step 4 — detected harness selected
-    data["onboard_select"] = webp_datauri(annotate(shot("5-onboarding.png"), [
-        ((788, 798, 2092, 928), "Click your agent to select it", (788, 690), "lt"),
-    ]), quality=80)
-
-    # Step 5 — describe your pod
-    data["describe"] = webp_datauri(shot("6.png"), quality=80)
-
-    # Step 6 — pod working: box the model selector in the message bar
-    data["working"] = webp_datauri(annotate(shot("7.png"), [
-        ((942, 1670, 1145, 1744), "Click the model to change it", (942, 1556), "lt"),
-    ]), quality=80)
-
-    # Step 7 — choose-model modal + default selected
-    data["model_modal"] = webp_datauri(shot("8.png"), quality=80)
-    data["model_default"] = webp_datauri(shot("9.png"), quality=80)
-
-    # OpenCode desktop walkthrough (animated GIF, embedded as-is)
+    sign = blur(shot("2.png"), EMAIL_BOX, 22)
+    data["signin"] = webp_datauri(sign.crop((0, CHROME_CROP, 2880, 1800)))
+    # Step 4 — the `lemma auth login` browser page (chrome + bookmarks cropped off)
+    data["cli_login"] = webp_datauri(shot("cli-login.png").crop((0, 255, 2880, 1800)), quality=80)
+    # Step 6 — the agent building the pod (shared illustration)
+    data["agent_building"] = webp_datauri(shot("agent-building.png"), quality=80)
+    # OpenCode free-credits walkthrough (animated GIF, embedded as-is)
     with open(GIF, "rb") as f:
         data["opencode_gif"] = "data:image/gif;base64," + base64.b64encode(f.read()).decode()
-    return data
+
+    # ---- per-agent swappable shots: step2 (open), step3 (prompt+working), step5 (done) ----
+    # OpenCode step 2: box the + (Open project) button
+    op = shot("step2-openproject.png")
+    _box(ImageDraw.Draw(op), (32, 212, 100, 278))
+    # Claude step 5: blur the account email
+    claude5 = blur(shot("claude-install.png"), (790, 345, 1045, 392))
+    # Codex step 5: blur the pod / company name
+    codex5 = blur(shot("codex-install.png"), (925, 84, 1110, 120))
+
+    shots = {
+        "opencode": {
+            "step2": webp_datauri(op, quality=80),
+            "step3": webp_datauri(shot("oc-step3.png"), quality=80),
+            "step5": webp_datauri(shot("agent-starters.png"), quality=80),
+        },
+        "codex": {
+            "step2": webp_datauri(shot("codex-open.png"), quality=80),
+            "step3": webp_datauri(shot("codex-step3.png"), quality=80),
+            "step5": webp_datauri(codex5, quality=80),
+        },
+        "claude": {
+            "step2": webp_datauri(shot("claude-open.png"), quality=80),
+            "step3": webp_datauri(shot("claude-step3.png"), quality=80),
+            "step5": webp_datauri(claude5, quality=80),
+        },
+    }
+    return data, shots
 
 
 PLACEHOLDERS = {
     "{{IMG_HOME}}": "home",
     "{{IMG_SIGNIN}}": "signin",
-    "{{IMG_ONBOARD_CONNECT}}": "onboard_connect",
-    "{{IMG_ONBOARD_SELECT}}": "onboard_select",
-    "{{IMG_DESCRIBE}}": "describe",
-    "{{IMG_WORKING}}": "working",
-    "{{IMG_MODEL_MODAL}}": "model_modal",
-    "{{IMG_MODEL_DEFAULT}}": "model_default",
+    "{{IMG_CLI_LOGIN}}": "cli_login",
+    "{{IMG_AGENT_BUILDING}}": "agent_building",
     "{{IMG_GIF}}": "opencode_gif",
 }
 
@@ -141,9 +147,13 @@ PLACEHOLDERS = {
 def main():
     with open(TEMPLATE, encoding="utf-8") as f:
         html = f.read()
-    images = build_images()
+    data, shots = build_images()
     for ph, key in PLACEHOLDERS.items():
-        html = html.replace(ph, images[key])
+        html = html.replace(ph, data[key])
+    # The template uses local image paths so it previews cleanly before build.
+    # For the final single-file page, promote data-embed values into src.
+    html = re.sub(r'src="[^"]*"\s+data-embed="(data:image/[^"]+)"', r'src="\1"', html)
+    html = html.replace("{{SHOTS_JS}}", json.dumps(shots))
     leftover = re.findall(r"\{\{[^}]+\}\}", html)
     if leftover:
         raise SystemExit(f"Unfilled placeholders: {leftover}")
