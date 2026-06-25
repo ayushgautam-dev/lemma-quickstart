@@ -332,6 +332,7 @@ lemma pod import ./my-team</pre></div>
         <div class="label">📋 Paste into <span id="promptAgentName">your agent</span><button class="copy" style="position:static;margin-left:auto" onclick="cpPrompt(this)">Copy prompt</button></div>
         <div class="code" style="margin:0"><pre id="promptBox"></pre></div>
       </div>
+      <div class="callout warn"><b>Important:</b> when your <span class="agentname">coding agent</span> asks for permission to run install or CLI commands, allow it. It might ask for permissions for different commands multiple times &mdash; allow every time it asks so it can complete the setup.</div>
       <figure class="shot"><span class="shotlabel">Prompt + agent working</span><img id="img-step3" alt="The prompt pasted and the agent working"><figcaption><b>Top:</b> the prompt you pasted. <b>Below:</b> your agent running the whole setup itself (CLI → Cloud → skills → sign-in).</figcaption></figure>
     </div>
 
@@ -351,9 +352,9 @@ lemma pod import ./my-team</pre></div>
 
     <div class="step">
       <span class="n">6</span>
-      <h3>Your agent builds it</h3>
+      <h3>Prompt your agent to build AI apps</h3>
       <p>Tell your <span class="agentname">coding agent</span> which idea to build (or pick one of its suggestions). It gets to work on your pod &mdash; creating the tables, agents, and app, then deploying it &mdash; all using the Lemma skills and CLI. Just approve when it asks, and it hands you a link to your finished app. 🎉</p>
-      <figure class="shot"><span class="shotlabel">Building your pod</span><img src="screenshots/agent-building.png" data-embed="{{IMG_AGENT_BUILDING}}" alt="The coding agent building a Lemma pod"><figcaption>Your coding agent starts working on your pod using Lemma skills and the CLI</figcaption></figure>
+      <figure class="shot"><span class="shotlabel">Prompt to build</span><img id="img-step6" src="screenshots/agent-building.png" data-embed="{{IMG_AGENT_BUILDING}}" alt="The coding agent building a Lemma pod"><figcaption>Prompt your coding agent to build an AI app, then let it use Lemma skills and the CLI</figcaption></figure>
     </div>
 
     <details class="acc">
@@ -415,6 +416,10 @@ First, set up Lemma:
       MULTIPLE, choose the one named after my own email (e.g. "<my-email>'s Personal") by
       default — do NOT ask me.
 
+Once these installation steps are complete, tell me setup is done. Then gently mention:
+"If Lemma looks useful, starring the GitHub repo helps other builders find it and helps you
+stay updated on fixes and new features: https://github.com/lemma-work/lemma-platform"
+
 Then explain Lemma to me briefly — what a pod, table, agent, workflow, app, and integration are.
 
 Ask me to choose:
@@ -432,10 +437,7 @@ Once the app is built, deploy the UI/app and give me the browser URL where I can
 tell me briefly what was created and what I should try first.
 
 If I choose my own project, ask me what I want to build, then use the Lemma CLI and Lemma skills
-to design and build a small first version in Lemma.
-
-Finally, let me know: if I find Lemma useful, I can star its GitHub repo at
-https://github.com/lemma-work/lemma-platform to stay updated on bug fixes and new features.</script>
+to design and build a small first version in Lemma.</script>
 
 <script type="application/json" id="shotsData">{{SHOTS_JS}}</script>
 
@@ -453,9 +455,9 @@ var SHOTS={};
 try{SHOTS=JSON.parse(document.getElementById("shotsData").textContent)}catch(e){SHOTS={};}
 if(!SHOTS.opencode){
   SHOTS={
-    opencode:{step2:"screenshots/step2-openproject.png",step3:"screenshots/oc-step3.png",step5:"screenshots/agent-starters.png"},
-    codex:{step2:"screenshots/codex-open.png",step3:"screenshots/codex-step3.png",step5:"screenshots/codex-install.png"},
-    claude:{step2:"screenshots/claude-open.png",step3:"screenshots/claude-step3.png",step5:"screenshots/claude-install.png"}
+    opencode:{step2:"screenshots/step2-openproject.png",step3:"screenshots/oc-step3.png",step5:"screenshots/agent-starters.png",step6:"screenshots/agent-building.png"},
+    codex:{step2:"screenshots/easier-trackb/codex-0.png",step3:"screenshots/easier-trackb/codex-1.png",step5:"screenshots/easier-trackb/codex-2.png",step6:"screenshots/easier-trackb/codex-3.png"},
+    claude:{step2:"screenshots/easier-trackb/claude_0.png",step3:"screenshots/easier-trackb/claude_1.png",step5:"screenshots/easier-trackb/claude_2.png",step6:"screenshots/easier-trackb/claude_4.png"}
   };
 }
 var FALLBACK_IMAGES={
@@ -468,7 +470,7 @@ var FALLBACK_IMAGES={
 Object.keys(FALLBACK_IMAGES).forEach(function(ph){
   document.querySelectorAll('img[src="'+ph+'"]').forEach(function(img){img.src=FALLBACK_IMAGES[ph];});
 });
-function applyShots(a){["step2","step3","step5"].forEach(function(s){
+function applyShots(a){["step2","step3","step5","step6"].forEach(function(s){
   var img=document.getElementById("img-"+s);
   if(img&&SHOTS[a]&&SHOTS[a][s])img.src=SHOTS[a][s];
 });}
@@ -516,7 +518,11 @@ function AGENT_apply(agent){
     ? "Open the <b>OpenCode</b> app, click <b>Open project / New project</b> (the <b>+</b> marked with the <b>purple box</b> in the image below), and choose a folder where you want to create your AI app. "+
       "That's where you'll work; you won't need the Lemma website again until your app is built. "+
       "<span class=\"muted\">(Set OpenCode up with free credits in the green box above first.)</span>"
+    : (agent==='codex')
+    ? "Open <b>Codex</b>, click the <b>folder / project selector</b> marked with the <b>purple box</b> in the image below, and create a new folder or choose the folder where you want to create your project. "+
+      "That's where you'll work; you won't need the Lemma website again until your app is built."
     : "Open <b>"+meta.name+"</b> in any folder &mdash; a fresh folder or an existing project. "+
+      "Click the <b>folder button</b> marked with the <b>purple box</b> in the image below, then create a new folder or choose the folder where you want to create your project. "+
       "That's where you'll work; you won't need the Lemma website again until your app is built.";
   return meta;
 }

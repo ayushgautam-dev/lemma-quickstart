@@ -22,6 +22,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 Image.MAX_IMAGE_PIXELS = None
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHOTS = os.path.join(HERE, "screenshots")
+EASIER = os.path.join(SHOTS, "easier-trackb")
 TEMPLATE = os.path.join(HERE, "lemma-quickstart.template.html")
 GIF = os.path.join(HERE, "opencode-desktop-walkthrough.gif")
 OUT = os.path.join(HERE, "index.html")
@@ -77,6 +78,10 @@ def shot(name):
     return Image.open(os.path.join(SHOTS, name)).convert("RGB")
 
 
+def easier(name):
+    return Image.open(os.path.join(EASIER, name)).convert("RGB")
+
+
 def webp_datauri(im, width=1320, quality=82):
     w, h = im.size
     im2 = im.resize((width, int(h * width / w)), Image.LANCZOS)
@@ -106,30 +111,53 @@ def build_images():
     with open(GIF, "rb") as f:
         data["opencode_gif"] = "data:image/gif;base64," + base64.b64encode(f.read()).decode()
 
-    # ---- per-agent swappable shots: step2 (open), step3 (prompt+working), step5 (done) ----
+    # ---- per-agent swappable shots: step2 (open), step3 (prompt+working), step5 (done), step6 (build) ----
     # OpenCode step 2: box the + (Open project) button
     op = shot("step2-openproject.png")
     _box(ImageDraw.Draw(op), (32, 212, 100, 278))
+    # Claude step 2: box the add-folder control
+    claude2 = annotate(easier("claude_0.png"), [
+        ((730, 1575, 780, 1630), "Choose folder", (625, 1510), "lt"),
+    ])
+    # Codex step 2: box the workspace folder selector
+    codex2 = annotate(easier("codex-0.png"), [
+        ((730, 1025, 1085, 1072), "Choose folder", (730, 950), "lt"),
+    ])
+    # Step 3: annotate the permission controls where the agent asks to run commands.
+    claude3 = annotate(easier("claude_1.png"), [
+        ((2140, 1540, 2380, 1610), "Allow", (2140, 1470), "lt"),
+    ])
+    codex3 = annotate(easier("codex-1.png"), [
+        ((416, 1558, 1840, 1626), "Choose Yes", (416, 1485), "lt"),
+        ((1660, 1692, 1840, 1756), "Submit", (1840, 1618), "rt"),
+    ])
     # Claude step 5: blur the account email
-    claude5 = blur(shot("claude-install.png"), (790, 345, 1045, 392))
-    # Codex step 5: blur the pod / company name
-    codex5 = blur(shot("codex-install.png"), (925, 84, 1110, 120))
+    claude5 = blur(easier("claude_2.png"), (780, 345, 1045, 392))
+    # Codex step 5: blur private org/account details before embedding.
+    codex5 = easier("codex-2.png")
+    codex5 = blur(codex5, (395, 1265, 1040, 1515), 24)
+    codex5 = blur(codex5, (940, 84, 1220, 120), 18)
+    # Codex step 6 also has a private default pod name near the top.
+    codex6 = blur(easier("codex-3.png"), (940, 84, 1220, 120), 18)
 
     shots = {
         "opencode": {
             "step2": webp_datauri(op, quality=80),
             "step3": webp_datauri(shot("oc-step3.png"), quality=80),
             "step5": webp_datauri(shot("agent-starters.png"), quality=80),
+            "step6": webp_datauri(shot("agent-building.png"), quality=80),
         },
         "codex": {
-            "step2": webp_datauri(shot("codex-open.png"), quality=80),
-            "step3": webp_datauri(shot("codex-step3.png"), quality=80),
+            "step2": webp_datauri(codex2, quality=80),
+            "step3": webp_datauri(codex3, quality=80),
             "step5": webp_datauri(codex5, quality=80),
+            "step6": webp_datauri(codex6, quality=80),
         },
         "claude": {
-            "step2": webp_datauri(shot("claude-open.png"), quality=80),
-            "step3": webp_datauri(shot("claude-step3.png"), quality=80),
+            "step2": webp_datauri(claude2, quality=80),
+            "step3": webp_datauri(claude3, quality=80),
             "step5": webp_datauri(claude5, quality=80),
+            "step6": webp_datauri(easier("claude_4.png"), quality=80),
         },
     }
     return data, shots
