@@ -286,7 +286,7 @@ lemma pod import ./my-team</pre></div>
     <p class="muted" style="margin-top:0">Have Claude Code, Codex, or OpenCode? Paste one prompt and your <span class="agentname">coding agent</span> installs Lemma, then builds and deploys a small app for you &mdash; you barely touch the Lemma website. About 5 minutes. <span style="opacity:.8">(Your "coding agent" just means that coding app.)</span></p>
 
     <!-- OpenCode free-credits pre-step -->
-    <details class="acc" id="opencode-acc">
+    <details class="acc" id="opencode-acc" style="display:none">
       <summary>🟢 First: get a free coding agent with OpenCode <span class="freebadge">$0</span><span class="chev">▾</span></summary>
       <div class="body">
         <p>No Claude Code or Codex subscription? Get a free coding agent with the <b>OpenCode desktop app</b> and <b>OpenCode Zen</b> free models &mdash; no terminal, and no card for the free tier. Here's the whole flow:</p>
@@ -511,7 +511,9 @@ function AGENT_apply(agent){
   var meta=AGENT[agent];
   document.getElementById('byo-pill').textContent=meta.pill;
   applyShots(agent);
-  document.getElementById('opencode-acc').open = (agent==='opencode');
+  var opencodeAcc=document.getElementById('opencode-acc');
+  opencodeAcc.style.display = (agent==='opencode') ? '' : 'none';
+  opencodeAcc.open = (agent==='opencode');
   document.getElementById('promptAgentName').textContent=meta.name;
   document.querySelectorAll('.agentname').forEach(function(e){e.textContent=meta.name+" agent";});
   document.getElementById('step2open').innerHTML = (agent==='opencode')
