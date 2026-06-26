@@ -189,6 +189,28 @@ footer a{color:var(--muted)}
     </div>
   </section>
 
+  <!-- Q2 (developer only) -->
+  <section class="block" id="qdev" style="display:none">
+    <div class="qhead"><span class="qnum">2</span><h2>What do you want to set up?</h2></div>
+    <div class="choices">
+      <button class="choice" type="button" data-devpath="local">
+        <span class="ic">⌘</span>
+        <span class="t">I want to use Lemma locally</span>
+        <span class="d">Run the full Lemma stack on your machine and build against your local server.</span>
+      </button>
+      <button class="choice" type="button" data-devpath="ide">
+        <span class="ic">▣</span>
+        <span class="t">I want to use Lemma in my IDE</span>
+        <span class="d">Use Claude Code, Codex, Cursor, or another coding agent with Lemma Cloud. No local stack needed.</span>
+      </button>
+      <button class="choice" type="button" data-devpath="key">
+        <span class="ic">🔑</span>
+        <span class="t">I want to use my key on lemma.work</span>
+        <span class="d">Bring your own OpenAI-compatible or Anthropic-compatible API key to hosted Lemma conversations.</span>
+      </button>
+    </div>
+  </section>
+
   <!-- Q2 (non-dev only) -->
   <section class="block" id="q2" style="display:none">
     <div class="qhead"><span class="qnum">2</span><h2>Which AI coding agent do you have?</h2></div>
@@ -216,12 +238,12 @@ footer a{color:var(--muted)}
   <!-- ============ DEV TRACK ============ -->
   <section class="block track" id="track-dev">
     <div class="trackhead">
-      <span class="pill gold">Developer path</span>
-      <span class="muted" style="font-size:13.5px">Star → run locally → build with your agent → host on Lemma</span>
+      <span class="pill gold">Developer path · Local stack</span>
+      <span class="muted" style="font-size:13.5px">Recommended for Mac users · local server → local CLI → build with your agent</span>
       <button class="startover" onclick="reset()">↺ Start over</button>
     </div>
-    <h2 style="font-size:26px;margin:6px 0 2px">Run Lemma yourself, build with your agent</h2>
-    <p class="muted" style="margin-top:0">Everything below uses the open-source repo. You can stay fully local, and only move to the cloud when you want teammates to reach your pod.</p>
+    <h2 style="font-size:26px;margin:6px 0 2px">Run Lemma locally</h2>
+    <p class="muted" style="margin-top:0">Use this when you want the full Lemma stack running on your own machine. Windows users should use WSL for the local stack.</p>
 
     <div class="step star">
       <span class="n">★</span>
@@ -236,6 +258,7 @@ footer a{color:var(--muted)}
       <p>One command brings up everything in containers (needs Docker or Podman &mdash; the installer can set up Podman for you).</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>curl -fsSL https://raw.githubusercontent.com/lemma-work/lemma-platform/main/install.sh | bash</pre></div>
       <p class="note">When it's up, open <b>http://127-0-0-1.sslip.io:3711</b> and create your account. (Use that host, not <code>localhost</code> &mdash; sign-in cookies are scoped to it.)</p>
+      <p class="note"><b>Windows:</b> run the local stack inside WSL.</p>
     </div>
 
     <div class="step">
@@ -274,10 +297,12 @@ lemma chat "what can you do in this pod?"</pre></div>
     <div class="step">
       <span class="n">6</span>
       <h3>Deploy it to Lemma (hosted)</h3>
-      <p>Want your pod reachable by teammates and surfaces without self-hosting? Push it to <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>. Export your local pod, point the CLI at the cloud, and import it there:</p>
+      <p>Want your pod reachable by teammates and surfaces without self-hosting? Push it to <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>. Export your local pod, point the CLI at the cloud, create a matching pod there, and import it in:</p>
+      <p class="note"><code>my-team</code> below is the pod name from step 5 &mdash; swap in whatever you named yours.</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma pod export ./my-team
 lemma servers cloud --use
 lemma auth login
+lemma pod create my-team
 lemma pod import ./my-team</pre></div>
       <p>Built an app for the pod? Deploy that too (a no-build HTML file or a Vite project dir):</p>
       <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma apps deploy my-app ./index.html</pre></div>
@@ -285,6 +310,109 @@ lemma pod import ./my-team</pre></div>
     </div>
 
     <div class="callout ok"><b>That's it.</b> You have Lemma running locally, a working pod, your own agent wired in, and a path to the cloud when you're ready.</div>
+  </section>
+
+  <!-- ============ IDE / CLOUD TRACK ============ -->
+  <section class="block track" id="track-ide">
+    <div class="trackhead">
+      <span class="pill gold">Developer path · IDE + Lemma Cloud</span>
+      <span class="muted" style="font-size:13.5px">Recommended for Mac users · cloud CLI → skills → build from your IDE</span>
+      <button class="startover" onclick="reset()">↺ Start over</button>
+    </div>
+    <h2 style="font-size:26px;margin:6px 0 2px">Use Lemma from your IDE</h2>
+    <p class="muted" style="margin-top:0">Use this when you want Claude Code, Codex, Cursor, or another coding agent to build on hosted Lemma Cloud without running Lemma locally.</p>
+
+    <div class="step star">
+      <span class="n">★</span>
+      <h3>Like what we've built? Star the repo</h3>
+      <p>If Lemma looks useful to you, a star genuinely helps other builders find it. We're shipping fixes and new features constantly &mdash; starring is the easiest way to keep the repo on your radar and catch the latest updates.</p>
+      <p><a class="btn-ghost" href="https://github.com/lemma-work/lemma-platform" target="_blank" rel="noopener">★ Star lemma-platform on GitHub ↗</a></p>
+    </div>
+
+    <div class="step">
+      <span class="n">1</span>
+      <h3>Install the CLI and use Lemma Cloud</h3>
+      <p>Install the Lemma CLI, point it at the hosted cloud server, and sign in with your Lemma account.</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>uv tool install lemma-terminal
+lemma servers cloud --use
+lemma auth login</pre></div>
+      <p class="note"><b>Which server?</b> <code>lemma servers cloud --use</code> tells the CLI to build against hosted <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>, not a local stack.</p>
+    </div>
+
+    <div class="step">
+      <span class="n">2</span>
+      <h3>Install Lemma skills</h3>
+      <p>Add Lemma's pod-building skills to your coding agent so it knows how to build pods, tables, agents, workflows, and apps with the CLI.</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma skills install</pre></div>
+      <p class="note">If it ever errors on symlinks, it's safe to skip. The CLI is already installed and pointed at Lemma Cloud from the step above.</p>
+    </div>
+
+    <div class="step">
+      <span class="n">3</span>
+      <h3>Open your IDE or coding agent</h3>
+      <p>Open Claude Code, Codex, Cursor, or your preferred coding agent in the folder where you want to work. Ask it to build your Lemma pod or app using the installed Lemma skills and CLI.</p>
+      <p class="note">You do not need to clone or run the Lemma platform repo for this path. Your coding agent will use your hosted Lemma account.</p>
+    </div>
+
+    <div class="step">
+      <span class="n">4</span>
+      <h3>Create or deploy your first pod</h3>
+      <p>You can let your coding agent drive this, or run a quick CLI smoke test yourself:</p>
+      <div class="code"><span class="lang">bash</span><button class="copy" onclick="cp(this)">Copy</button><pre>lemma pod create my-team --with-starter
+lemma chat "what can you do in this pod?"</pre></div>
+      <p class="note">Because the CLI is using Lemma Cloud, anything you create here is hosted on <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>.</p>
+    </div>
+
+    <div class="callout ok"><b>That's it.</b> Your IDE is set up to build on Lemma Cloud without running the local stack.</div>
+  </section>
+
+  <!-- ============ LEMMA.WORK API KEY TRACK ============ -->
+  <section class="block track" id="track-key">
+    <div class="trackhead">
+      <span class="pill gold">Developer path · Bring your own key</span>
+      <span class="muted" style="font-size:13.5px">Recommended for Windows and Mac · pod settings → runtime key → new conversation</span>
+      <button class="startover" onclick="reset()">↺ Start over</button>
+    </div>
+    <h2 style="font-size:26px;margin:6px 0 2px">Use your own API key on lemma.work</h2>
+    <p class="muted" style="margin-top:0">Recommended for both Windows and Mac users. Add your own model provider key to a hosted Lemma pod, then choose those models in new conversations. We currently support OpenAI-compatible and Anthropic-compatible keys.</p>
+
+    <div class="step">
+      <span class="n">1</span>
+      <h3>Open a pod you have built</h3>
+      <p>From <a class="inlinelink" href="https://lemma.work" target="_blank" rel="noopener">lemma.work</a>, open the pod where you want to use your own key. In the pod sidebar, click <b>Settings</b>.</p>
+      <figure class="shot"><span class="shotlabel">Inside your pod</span><img src="screenshots/lemma-work-key/01-settings.png" data-embed="{{IMG_KEY_POD_SETTINGS}}" alt="Open Settings inside a Lemma pod"><figcaption>Open any pod you built, then click Settings in the left sidebar</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">2</span>
+      <h3>Change the default agent runtime</h3>
+      <p>In <b>Pod Settings</b>, stay on the <b>General</b> tab. Under <b>Default Agent Runtime</b>, click <b>Change</b>.</p>
+      <figure class="shot"><span class="shotlabel">Pod Settings</span><img src="screenshots/lemma-work-key/02-choose-model.png" data-embed="{{IMG_KEY_CHANGE_RUNTIME}}" alt="Change the default agent runtime"><figcaption>General → Default Agent Runtime → Change</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">3</span>
+      <h3>Choose a compatible key type</h3>
+      <p>For OpenRouter or other OpenAI-compatible providers, choose <b>OpenAI-compatible</b>. For Anthropic-compatible providers, choose <b>Anthropic-compatible</b>.</p>
+      <p class="note">Lemma currently supports only OpenAI-compatible and Anthropic-compatible keys.</p>
+      <figure class="shot"><span class="shotlabel">Choose runtime type</span><img src="screenshots/lemma-work-key/02-runtime-picker.png" data-embed="{{IMG_KEY_RUNTIME_PICKER}}" alt="Choose OpenAI-compatible or Anthropic-compatible runtime"><figcaption>Pick the compatible runtime type from the left side of the model picker</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">4</span>
+      <h3>Save your key details</h3>
+      <p>Enter a name, base URL, API key, model IDs, and default model, then click <b>Save</b>.</p>
+      <figure class="shot"><span class="shotlabel">Key details</span><img src="screenshots/lemma-work-key/03-runtime-form.png" data-embed="{{IMG_KEY_RUNTIME_FORM}}" alt="Enter compatible provider key details"><figcaption>Add your provider details, available models, and default model in one pass</figcaption></figure>
+    </div>
+
+    <div class="step">
+      <span class="n">5</span>
+      <h3>Pick the model in a new conversation</h3>
+      <p>Go to <b>New conversation</b>, open the model selector near the message box, choose the key/runtime you just added, pick an available model, and send your first message.</p>
+      <figure class="shot"><span class="shotlabel">New conversation</span><img src="screenshots/lemma-work-key/04-new-conversation.png" data-embed="{{IMG_KEY_NEW_CONVERSATION}}" alt="Select your configured model in a new conversation"><figcaption>Select one of the models available for your configured key</figcaption></figure>
+    </div>
+
+    <div class="callout warn"><b>Temporary default-model bug:</b> the default model may not update immediately after you save. This will be fixed tomorrow, June 27, 2026. For now, refresh the Settings page and set the default model family again. Your key is saved, and you can still use it by selecting the model manually in a new conversation.</div>
   </section>
 
   <!-- ============ BRING-YOUR-OWN-AGENT TRACK ============ -->
@@ -477,7 +605,12 @@ var FALLBACK_IMAGES={
   ["{"+"{IMG_HOME}"+"}"]:"screenshots/1.png",
   ["{"+"{IMG_SIGNIN}"+"}"]:"screenshots/2.png",
   ["{"+"{IMG_CLI_LOGIN}"+"}"]:"screenshots/cli-login.png",
-  ["{"+"{IMG_AGENT_BUILDING}"+"}"]:"screenshots/agent-building.png"
+  ["{"+"{IMG_AGENT_BUILDING}"+"}"]:"screenshots/agent-building.png",
+  ["{"+"{IMG_KEY_POD_SETTINGS}"+"}"]:"screenshots/lemma-work-key/01-settings.png",
+  ["{"+"{IMG_KEY_CHANGE_RUNTIME}"+"}"]:"screenshots/lemma-work-key/02-choose-model.png",
+  ["{"+"{IMG_KEY_RUNTIME_PICKER}"+"}"]:"screenshots/lemma-work-key/02-runtime-picker.png",
+  ["{"+"{IMG_KEY_RUNTIME_FORM}"+"}"]:"screenshots/lemma-work-key/03-runtime-form.png",
+  ["{"+"{IMG_KEY_NEW_CONVERSATION}"+"}"]:"screenshots/lemma-work-key/04-new-conversation.png"
 };
 Object.keys(FALLBACK_IMAGES).forEach(function(ph){
   document.querySelectorAll('img[src="'+ph+'"]').forEach(function(img){img.src=FALLBACK_IMAGES[ph];});
@@ -492,8 +625,9 @@ function show(id,on){document.getElementById(id).classList.toggle('show',on)}
 function reset(){
   state={persona:null,agent:null};
   document.querySelectorAll('.choice').forEach(c=>c.classList.remove('active'));
+  document.getElementById('qdev').style.display='none';
   document.getElementById('q2').style.display='none';
-  show('track-dev',false);show('track-byo',false);
+  show('track-dev',false);show('track-ide',false);show('track-key',false);show('track-byo',false);
   document.getElementById('q1').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
@@ -502,13 +636,23 @@ document.querySelectorAll('[data-persona]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('[data-persona]').forEach(c=>c.classList.toggle('active',c===b));
   if(state.persona==='dev'){
     document.getElementById('q2').style.display='none';
-    show('track-byo',false);show('track-dev',true);
-    setTimeout(()=>document.getElementById('track-dev').scrollIntoView({behavior:'smooth',block:'start'}),80);
+    show('track-byo',false);show('track-dev',false);show('track-ide',false);show('track-key',false);
+    var qdev=document.getElementById('qdev');qdev.style.display='block';
+    setTimeout(()=>qdev.scrollIntoView({behavior:'smooth',block:'center'}),80);
   }else{
-    show('track-dev',false);show('track-byo',false);
+    document.getElementById('qdev').style.display='none';
+    show('track-dev',false);show('track-ide',false);show('track-key',false);show('track-byo',false);
     var q2=document.getElementById('q2');q2.style.display='block';
     setTimeout(()=>q2.scrollIntoView({behavior:'smooth',block:'center'}),80);
   }
+});
+
+document.querySelectorAll('[data-devpath]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-devpath]').forEach(c=>c.classList.toggle('active',c===b));
+  var map={local:'track-dev',ide:'track-ide',key:'track-key'};
+  Object.keys(map).forEach(function(k){show(map[k], b.dataset.devpath===k);});
+  show('track-byo',false);
+  setTimeout(()=>document.getElementById(map[b.dataset.devpath]).scrollIntoView({behavior:'smooth',block:'start'}),80);
 });
 
 document.querySelectorAll('[data-agent]').forEach(b=>b.onclick=()=>{

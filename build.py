@@ -23,6 +23,7 @@ Image.MAX_IMAGE_PIXELS = None
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHOTS = os.path.join(HERE, "screenshots")
 EASIER = os.path.join(SHOTS, "easier-trackb")
+KEY_SHOTS = os.path.join(SHOTS, "lemma-work-key")
 TEMPLATE = os.path.join(HERE, "lemma-quickstart.template.html")
 GIF = os.path.join(HERE, "opencode-desktop-walkthrough.gif")
 OUT = os.path.join(HERE, "index.html")
@@ -82,6 +83,10 @@ def easier(name):
     return Image.open(os.path.join(EASIER, name)).convert("RGB")
 
 
+def key_shot(name):
+    return Image.open(os.path.join(KEY_SHOTS, name)).convert("RGB")
+
+
 def webp_datauri(im, width=1320, quality=82):
     w, h = im.size
     im2 = im.resize((width, int(h * width / w)), Image.LANCZOS)
@@ -110,6 +115,31 @@ def build_images():
     # OpenCode free-credits walkthrough (animated GIF, embedded as-is)
     with open(GIF, "rb") as f:
         data["opencode_gif"] = "data:image/gif;base64," + base64.b64encode(f.read()).decode()
+
+    # Hosted Lemma key setup guide. Blur the client pod name (top-left) on every shot,
+    # and the "Your apps" card (client app name/URL) on the home/settings shot.
+    POD_NAME = (24, 30, 300, 72)
+    APP_CARD = (410, 300, 915, 690)
+    s01 = blur(blur(key_shot("01-settings.png"), APP_CARD), POD_NAME)
+    data["key_pod_settings"] = webp_datauri(annotate(s01, [
+        ((18, 930, 370, 966), "Open Settings", (64, 870), "lt"),
+    ]), quality=80)
+    data["key_change_runtime"] = webp_datauri(annotate(blur(key_shot("02-choose-model.png"), POD_NAME), [
+        ((640, 122, 1668, 376), "Default Agent Runtime", (664, 58), "lt"),
+        ((1540, 256, 1622, 296), "Change", (1624, 206), "rt"),
+    ]), quality=80)
+    data["key_runtime_picker"] = webp_datauri(annotate(blur(key_shot("02-runtime-picker.png"), POD_NAME), [
+        ((466, 702, 736, 774), "OpenAI-compatible", (512, 635), "lt"),
+        ((466, 794, 736, 832), "Anthropic-compatible", (736, 842), "rt"),
+    ]), quality=80)
+    data["key_runtime_form"] = webp_datauri(annotate(blur(key_shot("03-runtime-form.png"), POD_NAME), [
+        ((466, 702, 736, 774), "Compatible key type", (512, 635), "lt"),
+        ((774, 382, 1440, 740), "Fill in your key details", (836, 316), "lt"),
+        ((1360, 778, 1438, 824), "Save", (1438, 724), "rt"),
+    ]), quality=80)
+    data["key_new_conversation"] = webp_datauri(annotate(blur(key_shot("04-new-conversation.png"), POD_NAME), [
+        ((640, 980, 940, 1022), "Model selector", (640, 910), "lt"),
+    ]), quality=80)
 
     # ---- per-agent swappable shots: step2 (open), step3 (prompt+working), step5 (done), step6 (build) ----
     # OpenCode step 2: box the + (Open project) button
@@ -169,6 +199,11 @@ PLACEHOLDERS = {
     "{{IMG_CLI_LOGIN}}": "cli_login",
     "{{IMG_AGENT_BUILDING}}": "agent_building",
     "{{IMG_GIF}}": "opencode_gif",
+    "{{IMG_KEY_POD_SETTINGS}}": "key_pod_settings",
+    "{{IMG_KEY_CHANGE_RUNTIME}}": "key_change_runtime",
+    "{{IMG_KEY_RUNTIME_PICKER}}": "key_runtime_picker",
+    "{{IMG_KEY_RUNTIME_FORM}}": "key_runtime_form",
+    "{{IMG_KEY_NEW_CONVERSATION}}": "key_new_conversation",
 }
 
 
